@@ -13,13 +13,13 @@ npx playwright install chromium   # only needed for E2E tests
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Rebuild `dist/` on every change (unminified, inline sourcemaps) |
-| `npm run build` | Type-check and produce a production build in `dist/` |
-| `npm test` | Unit tests (Vitest + Testing Library) |
+| Command            | Description                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| `npm run dev`      | Rebuild `dist/` on every change (unminified, inline sourcemaps)                      |
+| `npm run build`    | Type-check and produce a production build in `dist/`                                 |
+| `npm test`         | Unit tests (Vitest + Testing Library)                                                |
 | `npm run test:e2e` | Build, then load the extension in Chromium and smoke test github.com (needs network) |
-| `npm run package` | Build and zip `dist/` into `release/github-pr-review-2.0-v<version>.zip` |
+| `npm run package`  | Build and zip `dist/` into `release/github-pr-review-2.0-v<version>.zip`             |
 
 ## Load in Edge
 
