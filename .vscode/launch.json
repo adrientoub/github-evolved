@@ -12,7 +12,13 @@
         "--load-extension=${workspaceFolder}/dist"
       ],
       "webRoot": "${workspaceFolder}",
-      "sourceMaps": true
+      "sourceMaps": true,
+      // Only use our extension's source maps; github.com's maps resolve into the workspace and fail.
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "chrome-extension://**",
+        "!**/node_modules/**"
+      ]
     }
   ]
 }
