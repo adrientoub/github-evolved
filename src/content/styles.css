@@ -1,42 +1,214 @@
+/* Primer CSS variables inherit through the shadow boundary, so colors follow GitHub's theme. */
 :host {
   all: initial;
-}
-
-.badge {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  z-index: 2147483647;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: #1f6feb;
-  color: #fff;
-  font:
-    600 12px/1.2 -apple-system,
+  display: inline-block;
+  font-family: var(
+    --fontStack-sansSerif,
+    -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
-    sans-serif;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 25%);
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #3fb950;
-}
-
-button {
-  all: unset;
-  cursor: pointer;
+    'Noto Sans',
+    Helvetica,
+    Arial,
+    sans-serif
+  );
   font-size: 14px;
-  line-height: 1;
-  opacity: 0.8;
+  line-height: 1.5;
+  color: var(--fgColor-default, #1f2328);
 }
 
-button:hover {
-  opacity: 1;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.review {
+  position: relative;
+}
+
+.split {
+  display: flex;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--button-default-fgColor-rest, #25292e);
+  background: var(--button-default-bgColor-rest, #f6f8fa);
+  border: 1px solid var(--button-default-borderColor-rest, #d1d9e0);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--button-default-bgColor-hover, #eff2f5);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--focus-outlineColor, #0969da);
+  outline-offset: -2px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-primary {
+  color: var(--button-primary-fgColor-rest, #fff);
+  background: var(--button-primary-bgColor-rest, #1f883d);
+  border-color: var(--button-primary-borderColor-rest, rgb(31 35 40 / 15%));
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--button-primary-bgColor-hover, #1c8139);
+}
+
+.btn-main {
+  min-width: 120px;
+  padding: 0 20px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-toggle {
+  width: 32px;
+  padding: 0;
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-color: rgb(255 255 255 / 30%);
+}
+
+.octicon {
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.panel,
+.toast {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 100;
+  background: var(--overlay-bgColor, #fff);
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 12px;
+  box-shadow: var(--shadow-floating-large, 0 8px 24px rgb(66 74 83 / 20%));
+}
+
+.panel {
+  width: min(480px, 90vw);
+}
+
+.align-left {
+  right: auto;
+  left: 0;
+}
+
+.toast {
+  max-width: 360px;
+  padding: 8px 12px;
+  color: var(--fgColor-danger, #d1242f);
+  white-space: normal;
+}
+
+.panel-header {
+  padding: 12px 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--borderColor-default, #d1d9e0);
+}
+
+.panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 8px 12px;
+  font: inherit;
+  color: inherit;
+  background: var(--bgColor-default, #fff);
+  border: 1px solid var(--control-borderColor-rest, #d1d9e0);
+  border-radius: 6px;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: 2px solid var(--focus-outlineColor, #0969da);
+  outline-offset: -1px;
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.option {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.option input {
+  margin: 3px 0 0;
+}
+
+.option.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.option > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.description,
+.note {
+  color: var(--fgColor-muted, #59636e);
+  font-size: 12px;
+}
+
+.note,
+.error {
+  margin: 0;
+}
+
+.error {
+  color: var(--fgColor-danger, #d1242f);
+}
+
+.panel-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--borderColor-default, #d1d9e0);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

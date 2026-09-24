@@ -7,6 +7,8 @@
       "request": "launch",
       "url": "https://github.com",
       "preLaunchTask": "build:dev",
+      // Exposes CDP on localhost so tools (e.g. Playwright connectOverCDP) can inspect the live DOM.
+      "port": 9222,
       "runtimeArgs": [
         "--disable-extensions-except=${workspaceFolder}/dist",
         "--load-extension=${workspaceFolder}/dist"
