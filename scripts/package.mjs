@@ -16,7 +16,7 @@ for (const entry of readdirSync(distDir, { recursive: true, withFileTypes: true 
 }
 
 mkdirSync(releaseDir, { recursive: true });
-const outFile = join(releaseDir, `github-pr-review-2.0-v${manifest.version}.zip`);
+const outFile = join(releaseDir, `github-evolved-v${manifest.version}.zip`);
 writeFileSync(outFile, zipSync(files, { level: 9 }));
 
 console.log(`Packaged ${Object.keys(files).length} files -> ${relative(root, outFile)}`);

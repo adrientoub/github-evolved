@@ -1,4 +1,4 @@
-# GitHub PR Review 2.0
+# GitHub Evolved
 
 Microsoft Edge (Manifest V3) extension that improves the GitHub pull request review experience. Built with Vite, React, and TypeScript.
 
@@ -26,7 +26,7 @@ npx playwright install chromium   # only needed for E2E tests
 | `npm run build`    | Type-check and produce a production build in `dist/`                             |
 | `npm test`         | Unit tests (Vitest + Testing Library)                                            |
 | `npm run test:e2e` | Build, then load the extension in Chromium against mocked GitHub pages (offline) |
-| `npm run package`  | Build and zip `dist/` into `release/github-pr-review-2.0-v<version>.zip`         |
+| `npm run package`  | Build and zip `dist/` into `release/github-evolved-v<version>.zip`               |
 
 ## Load in Edge
 
@@ -44,6 +44,7 @@ When using `npm run dev`, click **Reload** on the extension card in `edge://exte
 ## Layout
 
 - `src/manifest.ts` — manifest source; version comes from `package.json`
+- `public/icons/` — extension icons copied into `dist/` by Vite
 - `src/github/` — PR URL parsing and GitHub's internal review endpoints
 - `src/content/` — content script; React UI is mounted in a shadow root so GitHub styles don't leak in
 - `scripts/package.mjs` — zips `dist/` for sideloading or store upload
