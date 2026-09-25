@@ -41,6 +41,12 @@ npx playwright install chromium   # only needed for E2E tests
 
 When using `npm run dev`, click **Reload** on the extension card in `edge://extensions` and refresh the GitHub tab to pick up changes.
 
+## Edge Add-ons package
+
+Run `npm run package` to create `release/github-evolved-v<version>.zip`. The ZIP contains `manifest.json` and `content.js` at its root and the icons under `icons/`; upload that ZIP (not the `dist/` folder) to the Edge Add-ons Partner Center. The manifest version comes from `package.json`, so update the package version before submitting an update.
+
+The [Build workflow](.github/workflows/build.yml) runs unit and browser tests, then builds and uploads the same store-ready ZIP as the `github-evolved-edge` artifact on pushes to `master`, pull requests, and manual runs. Download the artifact from a successful run and extract the inner `github-evolved-v<version>.zip` for submission; the GitHub Actions artifact itself is a wrapper ZIP.
+
 ## Layout
 
 - `src/manifest.ts` — manifest source; version comes from `package.json`
