@@ -1,0 +1,5 @@
+GitHub Evolved makes pull request reviews easier to reach in Microsoft Edge. An Approve button appears in the pull request header on the Conversation, Commits, Checks, and Files changed tabs, so you can approve without switching to Files changed.
+
+Share pull requests in one click. A copy button next to the pull request number copies a link to the pull request.
+
+GitHub Evolved is an independent extension and is not affiliated with GitHub.
