@@ -3,9 +3,10 @@ import { chromium, expect, test, type BrowserContext, type Page } from '@playwri
 
 const extensionPath = resolve(import.meta.dirname, '../../dist');
 
-// Minimal stand-in for GitHub's PR page: just the header actions container and the fetch nonce.
+// Minimal stand-in for GitHub's PR page: the header title and actions containers and the fetch nonce.
 const prPageHtml = `<!doctype html><html><head><meta name="fetch-nonce" content="test-nonce"></head>
-<body><div data-component="PageHeader"><h1>PR</h1><div data-component="PH_Actions"><button>Code</button></div></div></body></html>`;
+<body><div data-component="PageHeader"><div data-component="TitleArea"><div><h1 data-component="PH_Title"><span class="markdown-title">Fix <code>&lt;Foo&gt;</code> [bug]</span></h1><span class="suffix"><span>#1</span></span></div></div>
+<div data-component="PH_Actions"><button>Code</button></div></div></body></html>`;
 
 const changesJson = {
   payload: {
@@ -93,15 +94,42 @@ test('submits a review with a comment from the dropdown', async () => {
   ]);
 });
 
+test('copies the PR title with a link', async () => {
+  const origin = 'https://tenant.ghe.com';
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
+  const page = await context.newPage();
+  await mockGitHub(page, origin);
+  await page.goto(`${origin}/o/r/pull/1/files?diff=split#top`);
+
+  await expect(page.locator('.suffix > :last-child')).toHaveId('gh-evolved-copy-title-root');
+  const copy = page.getByRole('button', { name: 'Copy title with link' });
+  await copy.click();
+
+  await expect(copy).toHaveClass(/copied/);
+  await expect(page.getByText('Copied!')).toBeVisible();
+  const clipboard = await page.evaluate(async () => {
+    const [item] = await navigator.clipboard.read();
+    return {
+      html: await (await item.getType('text/html')).text(),
+      text: await (await item.getType('text/plain')).text(),
+    };
+  });
+  expect(clipboard.html).toContain('<a href="https://tenant.ghe.com/o/r/pull/1">PR#1: Fix &lt;Foo&gt; [bug]</a>');
+  expect(clipboard.text).toBe('[PR#1: Fix <Foo> \\[bug\\]](https://tenant.ghe.com/o/r/pull/1)');
+
+  await expect(copy).not.toHaveClass(/copied/, { timeout: 5000 });
+  await expect(page.getByText('Copied!')).toHaveCount(0);
+});
+
 test('does not inject on non-PR pages or other sites', async () => {
   const page = await context.newPage();
   await mockGitHub(page, 'https://github.com');
   await page.goto('https://github.com/o/r/issues/1');
   await page.waitForTimeout(1000);
-  await expect(page.locator('#gh-pr-review-root')).toHaveCount(0);
+  await expect(page.locator('#gh-pr-review-root, #gh-evolved-copy-title-root')).toHaveCount(0);
 
   await page.route('https://example.com/**', (route) => route.fulfill({ contentType: 'text/html', body: prPageHtml }));
   await page.goto('https://example.com/o/r/pull/1');
   await page.waitForTimeout(1000);
-  await expect(page.locator('#gh-pr-review-root')).toHaveCount(0);
+  await expect(page.locator('#gh-pr-review-root, #gh-evolved-copy-title-root')).toHaveCount(0);
 });

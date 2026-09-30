@@ -8,6 +8,7 @@ It only runs on `https://github.com/*` and `https://*.ghe.com/*`.
 
 - **Approve button on every PR tab.** An Approve split button sits in the PR header on Conversation, Commits, Checks, and Files changed. One click approves the PR.
 - **Review menu.** The arrow next to it opens the same options as GitHub's "Review changes" dialog: a comment box, Comment / Approve / Request changes, and Submit review (<kbd>Ctrl</kbd>+<kbd>Enter</kbd>). Options you aren't allowed to use, such as approving your own PR, are disabled. Pending inline comments are submitted with the review.
+- **Copy title with link.** A copy button next to the PR number copies `PR#123: Title` as a link to the PR. Rich-text apps (Teams, Outlook, Slack, Docs) paste a hyperlink; plain-text editors get Markdown (`[PR#123: Title](url)`). The button animates to a check mark with a "Copied!" bubble to confirm the clipboard was updated.
 
 Reviews are submitted with your normal GitHub session, using the same endpoint as GitHub's own review dialog, so there's no token to set up.
 

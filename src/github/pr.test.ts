@@ -1,4 +1,4 @@
-import { parsePullRequestPath } from './pr';
+import { parsePullRequestPath, readPullRequestTitle } from './pr';
 
 describe('parsePullRequestPath', () => {
   it.each([
@@ -21,4 +21,33 @@ describe('parsePullRequestPath', () => {
       expect(parsePullRequestPath(path)).toBeNull();
     },
   );
+});
+
+describe('readPullRequestTitle', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+    document.title = '';
+  });
+
+  it('reads the React header title without the PR number', () => {
+    document.body.innerHTML = `<h1 data-component="PH_Title"><span class="markdown-title">Fix  <code>foo</code>
+      bug</span><span class="sr-only"> - #12</span></h1><span>#12</span>`;
+    expect(readPullRequestTitle()).toBe('Fix foo bug');
+  });
+
+  it('reads the legacy header title', () => {
+    document.body.innerHTML = `<div class="gh-header-show"><h1 class="gh-header-title">
+      <bdi class="js-issue-title markdown-title">Legacy title</bdi> <span class="gh-header-number">#12</span></h1></div>`;
+    expect(readPullRequestTitle()).toBe('Legacy title');
+  });
+
+  it('falls back to the document title', () => {
+    document.title = 'Bump deps by dependabot[bot] · Pull Request #12 · octo/repo · GitHub';
+    expect(readPullRequestTitle()).toBe('Bump deps');
+  });
+
+  it('returns null when no title is available', () => {
+    document.title = 'octo/repo · GitHub';
+    expect(readPullRequestTitle()).toBeNull();
+  });
 });

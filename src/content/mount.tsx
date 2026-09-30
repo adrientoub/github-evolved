@@ -1,20 +1,40 @@
-import { StrictMode } from 'react';
+import { StrictMode, type ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { parsePullRequestPath, type PullRequestRef } from '../github/pr';
+import { parsePullRequestPath, readPullRequestTitle, type PullRequestRef } from '../github/pr';
+import { CopyTitleButton } from './CopyTitleButton';
 import { ReviewButton } from './ReviewButton';
 import styles from './styles.css?inline';
 
 export const HOST_ID = 'gh-pr-review-root';
+export const COPY_TITLE_HOST_ID = 'gh-evolved-copy-title-root';
+
+interface Widget {
+  hostId: string;
+  name: string;
+  /** Moves the host into place; returns false when its anchor isn't on the page. */
+  place: (host: HTMLElement) => boolean;
+  render: (pr: PullRequestRef) => ReactNode;
+}
 
 // React PR header (all tabs) first, then the legacy server-rendered header.
-const ANCHOR_SELECTORS = ['[data-component="PH_Actions"]', '.gh-header-actions'];
+const ACTIONS_SELECTORS = ['[data-component="PH_Actions"]', '.gh-header-actions'];
 
-function findAnchor(): Element | null {
-  for (const selector of ANCHOR_SELECTORS) {
+function findActions(): Element | null {
+  for (const selector of ACTIONS_SELECTORS) {
     const el = document.querySelector(selector);
     if (el) return el;
   }
   return null;
+}
+
+function findTitleSlot(): Element | null {
+  const title = document.querySelector('[data-component="PH_Title"]');
+  if (title) {
+    // The React header renders "#123" in a nowrap sibling; joining it keeps the button on the number's line.
+    const suffix = title.nextElementSibling;
+    return suffix && /#\s*\d+/.test(suffix.textContent ?? '') ? suffix : title;
+  }
+  return document.querySelector('.gh-header-show .gh-header-title');
 }
 
 function navigateAfterSubmit(redirectUrl: string | undefined) {
@@ -23,11 +43,43 @@ function navigateAfterSubmit(redirectUrl: string | undefined) {
   else location.reload();
 }
 
-export function startReviewButton(): void {
-  if (document.getElementById(HOST_ID)) return;
+const reviewButton: Widget = {
+  hostId: HOST_ID,
+  name: 'review',
+  place(host) {
+    const anchor = findActions();
+    if (!anchor) return false;
+    if (host.parentElement !== anchor) anchor.prepend(host);
+    return true;
+  },
+  render: (pr) => <ReviewButton key={pr.basePath} pr={pr} onSubmitted={navigateAfterSubmit} />,
+};
+
+const copyTitleButton: Widget = {
+  hostId: COPY_TITLE_HOST_ID,
+  name: 'copy-title',
+  place(host) {
+    const slot = findTitleSlot();
+    if (!slot) return false;
+    if (host.parentElement !== slot) slot.append(host);
+    return true;
+  },
+  render: (pr) => (
+    <CopyTitleButton
+      key={pr.basePath}
+      number={pr.number}
+      url={location.origin + pr.basePath}
+      getTitle={() => readPullRequestTitle()}
+    />
+  ),
+};
+
+function createWidget(widget: Widget): (() => void) | null {
+  if (document.getElementById(widget.hostId)) return null;
 
   const host = document.createElement('div');
-  host.id = HOST_ID;
+  host.id = widget.hostId;
+  host.dataset.widget = widget.name;
   const shadow = host.attachShadow({ mode: 'open' });
   const style = document.createElement('style');
   style.textContent = styles;
@@ -37,24 +89,23 @@ export function startReviewButton(): void {
   let root: Root | null = null;
   let currentPr: PullRequestRef | null = null;
 
-  const sync = () => {
+  return () => {
     const pr = parsePullRequestPath(location.pathname);
-    const anchor = pr ? findAnchor() : null;
-    if (!pr || !anchor) {
+    if (!pr || !widget.place(host)) {
       host.remove();
       return;
     }
-    if (host.parentElement !== anchor) anchor.prepend(host);
     if (pr.basePath !== currentPr?.basePath) {
       currentPr = pr;
       root ??= createRoot(container);
-      root.render(
-        <StrictMode>
-          <ReviewButton key={pr.basePath} pr={pr} onSubmitted={navigateAfterSubmit} />
-        </StrictMode>,
-      );
+      root.render(<StrictMode>{widget.render(pr)}</StrictMode>);
     }
   };
+}
+
+export function startContentScript(): void {
+  const syncs = [reviewButton, copyTitleButton].map(createWidget).filter((sync) => sync !== null);
+  if (!syncs.length) return;
 
   // Idle scheduling avoids touching GitHub's React tree while it's still hydrating.
   let scheduled = false;
@@ -64,7 +115,7 @@ export function startReviewButton(): void {
     requestIdleCallback(
       () => {
         scheduled = false;
-        sync();
+        for (const sync of syncs) sync();
       },
       { timeout: 3000 },
     );

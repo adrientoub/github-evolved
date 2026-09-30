@@ -1,3 +1,3 @@
-import { startReviewButton } from './mount';
+import { startContentScript } from './mount';
 
-startReviewButton();
+startContentScript();
