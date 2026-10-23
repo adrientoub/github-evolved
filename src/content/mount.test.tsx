@@ -6,8 +6,9 @@ vi.mock('../github/review', () => ({ fetchReviewContext: vi.fn(), submitReview: 
 
 const host = () => document.getElementById(HOST_ID);
 const copyHost = () => document.getElementById(COPY_TITLE_HOST_ID);
-const headerHtml = `<div data-component="TitleArea"><div><h1 data-component="PH_Title"><span class="markdown-title">Title</span></h1><span class="suffix"><span>#1</span></span></div></div>
-<div data-component="PH_Actions"><button>Code</button></div>`;
+const headerHtml = `<div data-component="PageHeader"><div data-component="TitleArea"><h2 data-component="PH_Title"><span class="markdown-title">Title</span><span>#1</span></h2></div></div>
+<div data-component="PageHeader"><div data-component="TitleArea"><div><h1 data-component="Heading"><span class="markdown-title">Title</span></h1><span class="suffix"><span>#1</span></span></div></div>
+<div data-component="PH_Actions"><button>Code</button></div></div>`;
 
 describe('startContentScript', () => {
   beforeAll(() => {
@@ -47,7 +48,7 @@ describe('startContentScript', () => {
     await waitFor(() => expect(document.querySelector('.suffix')?.lastElementChild?.id).toBe(COPY_TITLE_HOST_ID));
   });
 
-  it('falls back to the title itself when there is no number suffix', async () => {
+  it('falls back to the older PH_Title header', async () => {
     document.body.innerHTML = '<h1 data-component="PH_Title"><bdi class="markdown-title">Title</bdi> #1</h1>';
     await waitFor(() => expect(copyHost()?.parentElement).toHaveAttribute('data-component', 'PH_Title'));
   });

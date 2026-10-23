@@ -27,8 +27,11 @@ function findActions(): Element | null {
   return null;
 }
 
+// Main React header title (PH_Title now only marks the compact sticky header), then the older React header.
+const REACT_TITLE_SELECTORS = ['[data-component="TitleArea"] h1', '[data-component="PH_Title"]'];
+
 function findTitleSlot(): Element | null {
-  const title = document.querySelector('[data-component="PH_Title"]');
+  const title = REACT_TITLE_SELECTORS.map((s) => document.querySelector(s)).find((el) => el !== null);
   if (title) {
     // The React header renders "#123" in a nowrap sibling; joining it keeps the button on the number's line.
     const suffix = title.nextElementSibling;
