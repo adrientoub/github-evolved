@@ -1,6 +1,6 @@
 {
   "name": "github-evolved",
-  "version": "0.3.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "Microsoft Edge extension that improves the GitHub pull request review experience.",
