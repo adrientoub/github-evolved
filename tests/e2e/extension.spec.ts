@@ -5,7 +5,8 @@ const extensionPath = resolve(import.meta.dirname, '../../dist');
 
 // Minimal stand-in for GitHub's PR page: the header title and actions containers and the fetch nonce.
 const prPageHtml = `<!doctype html><html><head><meta name="fetch-nonce" content="test-nonce"></head>
-<body><div data-component="PageHeader"><div data-component="TitleArea"><div><h1 data-component="PH_Title"><span class="markdown-title">Fix <code>&lt;Foo&gt;</code> [bug]</span></h1><span class="suffix"><span>#1</span></span></div></div>
+<body><div data-component="PageHeader"><div data-component="TitleArea"><h2 data-component="PH_Title"><span class="markdown-title">Fix</span><span>#1</span></h2></div></div>
+<div data-component="PageHeader"><div data-component="TitleArea"><div><h1 data-component="Heading"><span class="markdown-title">Fix <code>&lt;Foo&gt;</code> [bug]</span></h1><span class="suffix"><span>#1</span></span></div></div>
 <div data-component="PH_Actions"><button>Code</button></div></div></body></html>`;
 
 const changesJson = {

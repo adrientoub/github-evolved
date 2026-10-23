@@ -29,6 +29,12 @@ describe('readPullRequestTitle', () => {
     document.title = '';
   });
 
+  it('prefers the main header title over the sticky header', () => {
+    document.body.innerHTML = `<div data-component="TitleArea"><h2 data-component="PH_Title"><span class="markdown-title">Stale</span></h2></div>
+      <div data-component="TitleArea"><div><h1><span class="markdown-title">Fix <code>foo</code></span><span class="sr-only"> - #12</span></h1><span>#12</span></div></div>`;
+    expect(readPullRequestTitle()).toBe('Fix foo');
+  });
+
   it('reads the React header title without the PR number', () => {
     document.body.innerHTML = `<h1 data-component="PH_Title"><span class="markdown-title">Fix  <code>foo</code>
       bug</span><span class="sr-only"> - #12</span></h1><span>#12</span>`;
